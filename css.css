@@ -1,0 +1,97 @@
+
+body
+	{
+	min-height:100vh;
+	background:#212121;
+
+}
+nav
+{
+	margin-top:1%;
+	width:10%;
+	height:70%;
+	position:fixed;
+}
+
+.underniv
+{
+	min-width:10%;
+	height:100%;
+	float:left;
+	background:#515151;
+}
+.header
+{
+	width:100%;
+	height:5%;
+	background:#030034;
+	
+}
+main
+{
+	min-width:90%;
+	min-height:90vh;
+	background:#212121;
+	padding:10px 10px 10px 10px;
+}
+.navdiv
+{
+	border-bottom:solid white 0.1vh;
+	width:100%;
+	height:7%;
+	text-align:center;
+	color:white;
+	font-size:3vh;
+	padding-top:2%;
+	background:#030034;
+}
+.navdiv:hover
+{
+	color:C40021;
+	background:#57BBBF;
+	cursor:pointer;
+}
+.container {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 320px);
+	grid-template-rows: repeat(auto-fill, 180px);
+	margin-left:10%;
+	border-bottom: 1px solid gray;
+  
+}
+.frame
+{
+	width:300px;
+	height:160px;
+	padding:10px;
+	border:0.1vh dashed gray;
+}
+.tile
+{
+	color:white;
+	width:300px;
+	background:#515151;
+	border:solid white 0.2vh;
+	
+}
+.titleDiv
+{
+	border-bottom:solid white 0.1vh;
+	padding:4px;
+}
+
+
+#a
+{
+	grid-column-start:1;
+	grid-column-end:2;
+	grid-row-start:2;
+	grid-row-end:3;
+}
+#b
+{
+	grid-column-start:1;
+	grid-column-end:2;
+	grid-row-start:1;
+	grid-row-end:2;
+}
