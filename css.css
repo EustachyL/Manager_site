@@ -3,7 +3,7 @@ body
 	{
 	min-height:100vh;
 	background:#212121;
-
+	margin-top:-1.6%;
 }
 nav
 {
@@ -11,6 +11,7 @@ nav
 	width:10%;
 	height:70%;
 	position:fixed;
+	z-index:10;
 }
 
 .underniv
@@ -18,13 +19,19 @@ nav
 	min-width:10%;
 	height:100%;
 	float:left;
-	background:#515151;
+	background:#313131;
 }
 .header
 {
 	width:100%;
-	height:5%;
-	background:#030034;
+	height:7%;
+	background:#313131;
+	
+}
+#mainName
+{
+	margin-left:45%;
+	font-size:6vh;
 	
 }
 main
@@ -43,7 +50,7 @@ main
 	color:white;
 	font-size:3vh;
 	padding-top:2%;
-	background:#030034;
+	background:#515151;
 }
 .navdiv:hover
 {
@@ -53,8 +60,8 @@ main
 }
 .container {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, 320px);
-	grid-template-rows: repeat(auto-fill, 180px);
+	grid-template-columns: repeat(auto-fill, 340px);
+	grid-template-rows: repeat(auto-fill, 210px);
 	margin-left:10%;
 	border-bottom: 1px solid gray;
   
@@ -62,16 +69,21 @@ main
 .frame
 {
 	width:300px;
-	height:160px;
-	padding:10px;
+	height:190px;
+	padding:20px;
+	padding-bottom:0px;
 	border:0.1vh dashed gray;
 }
 .tile
 {
+	position:relative;
 	color:white;
 	width:300px;
 	background:#515151;
 	border:solid white 0.2vh;
+	border-bottom:solid #515151 0vh;
+	
+	z-index: 2;
 	
 }
 .titleDiv
@@ -79,19 +91,140 @@ main
 	border-bottom:solid white 0.1vh;
 	padding:4px;
 }
-
-
-#a
+.statusDiv
 {
-	grid-column-start:1;
-	grid-column-end:2;
-	grid-row-start:2;
-	grid-row-end:3;
+	border-bottom:solid white 0.1vh;
+	padding:4px;
+	height:18px;
 }
-#b
+.infoDiv
 {
-	grid-column-start:1;
-	grid-column-end:2;
-	grid-row-start:1;
-	grid-row-end:2;
+
+	margin-top:-10px;
+}
+.menuDiv
+{
+	margin-top:-16px;
+	text-align:left;
+	color:white;
+	width:300px;
+	background:#515151;
+	border:solid white 0.2vh;
+	border-top:solid #515151 0vh;
+}
+.hiddenForm
+{
+	opacity:0;
+	width:1px;
+	height:1px;
+}
+.tileBtn
+{
+	height:20px;
+	width:20px;
+	margin:2px;
+	border: 1px solid gray;
+	background:gray;
+	
+}
+.tileBtn:hover
+{
+
+	color:C40021;
+	background:#57BBBF;
+	cursor:pointer;
+	
+}
+.monit {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 30%;
+  margin:auto;
+  border: 2px solid #f1f1f1;
+	background:#515151;
+	z-index:11;
+}
+monit-form
+{
+  padding: 10px;
+	width:1400px;
+	position:relative;
+	z-index:11;
+}
+#fieldMonit
+{
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 40%;
+  margin:auto;
+  border: 2px solid #f1f1f1;
+	background:#515151;
+	z-index:11;
+}
+.arrMenu
+{
+	position:relative;
+	padding-top:10px;
+	margin-left:120px;
+	width:80px;
+	display: flex;
+	opacity:0;
+	z-index:3;
+}
+.arrCtr
+{
+	position:relative;
+	color:green;
+	font-size:15;
+	width:20px;
+	height:20px;
+	background-image: url("plus.png");
+	opacity:1;
+	position:relative;
+	bottom:20px; 
+	left:140px;
+	z-index:3;
+}
+.arrBtn
+{
+	color:green;
+	font-size:15;
+	width:20px;
+	height:20px;
+	z-index:3;
+	
+}
+.empDiv
+{
+	width:20px;
+	height:20px;
+	
+}
+.leftArrow
+{
+	transform:rotate(180deg);
+	position:relative;
+	right:40px;
+	bottom:160px;
+	z-index:1;
+}
+.downArrow
+{
+	transform:rotate(90deg);
+	position:relative;
+	z-index:1;
+	bottom:47px;
+	left:27px;
+	width:70px;
+	height:70px;
+}
+.rightArrow
+{
+	
+	position:relative;
+	bottom:160px;
+	left:257px;
+	z-index:1;
 }
