@@ -24,7 +24,7 @@
 					
 					if (isset($_POST['dId']) && $_POST['quaryMode']==2)
 						delete_project();
-					if ((isset($_POST['uId']) || isset($_POST['sId'])) && $_POST['quaryMode']>=3)
+					if ((isset($_POST['uId']) || isset($_POST['sId'])|| isset($_POST['MfId'])) && $_POST['quaryMode']>=3)
 						update_project($_POST['quaryMode']);
 				}	
 				
@@ -84,6 +84,11 @@
 					{
 					$uId=$_POST['uId'];
 					}
+					if($mode==5)
+					{
+					$uId=$_POST['MfId'];
+					}
+					
 					if($mode==4)
 					{
 					$uId=$_POST['sId'];
@@ -119,6 +124,15 @@
 						{
 							$ustate=$_POST['cstate'];
 						}
+					}
+					if($mode==5)
+					{
+						$uTitle=$_POST['MfTitle'];
+						$uline1=$_POST['Mfline1'];
+						$uline2=$_POST['Mfline2'];
+						$udueDate=$_POST['Mfdate'];
+						$ustate=$_POST['Mfstate'];
+						$upriority=$_POST['Mfpriority'];
 					}
 					
 					
@@ -236,11 +250,47 @@
 				<input type="number" value=1 name="priority" >
 				<br>
 			
-				<button type="button" class="btn" onclick="submitForm()" >Create</button>
-				<button type="button" class="btn" onclick="closeForm()">Close</button>
+				<button type="button" class="btn" onclick="submitForm('monit')" >Create</button>
+				<button type="button" class="btn" onclick="closeForm('monit')">Close</button>
 			</form>
 		</div> 
-		
+	
+		<div class="monit" id="ChangeMonit">
+			<form method="post" id="ChangeMonit-form" class="monit-form">
+				<h1 id="MFT"></h1>
+				<input class="hiddenInput" hidden id="MfId" name="MfId" type="number" value="-1">
+			<input class="hiddenInput"  hidden id="MfcId" name="cId" type="number" value="-1">
+				<input hidden type="number"  id="quaryMode" name="quaryMode" value="5">
+				
+				<label for="Title"><b>Title</b></label>
+				<input type="text" placeholder="Title" name="MfTitle" id="MfTitle" required>
+				<br>				
+				<label for="line1"><b>Linia 1</b></label>
+				<input type="text" placeholder="tekst" name="Mfline1" id="Mfline1">
+				<br>
+				<label for="line2"><b>Linia 2</b></label>
+				<input type="text" placeholder="tekst" name="Mfline2" id="Mfline2" >
+				<br>
+				<label for="date"><b>Termin do wykonania</b></label>
+				<input type="date" name="Mfdate" id="Mfdate" required>
+				<br>
+				<label for="state"><b>Status po utworzeniu</b></label>
+				<select name="Mfstate" id="Mfstate">
+					<option value=0>oczekujący </option>
+					<option value=1>w trakcie </option>
+					<option value=2>zakończony </option>
+					<option value=3>anulowany </option>
+					<option value=4>wstrzymany </option>
+				</select>
+				<br>
+				<label for="priority" ><b>Piorytet</b></label>
+				<input type="number" value=1 name="Mfpriority" id="Mfpriority" required>
+				<br>
+			
+				<button type="button" class="btn" onclick="submitForm('ChangeMonit')" >modify</button>
+				<button type="button" class="btn" onclick="closeForm('ChangeMonit')">cancel</button>
+			</form>
+		</div> 
 		
 
 	</header>
@@ -294,7 +344,7 @@
 			<div class="container" id="container" style="color:white;">
 			
 				
-				
+
 				<script type="text/javascript">
 					var inputId = document.getElementById("cId");
 					var isAdding=0;
@@ -362,14 +412,14 @@
 						document.getElementById("monit").style.display = "block";
 					}
 
-					function closeForm() {
-						document.getElementById("monit").style.display = "none";
+					function closeForm(monit) {
+						document.getElementById(monit).style.display = "none";
 					}
 					
-					function submitForm()
+					function submitForm(monit)
 					{
-						document.getElementById("monit-form").submit(); 
-						closeForm();
+						document.getElementById(monit+"-form").submit(); 
+						closeForm(monit);
 					}
 					function deleteTile(id)
 					{
@@ -395,6 +445,23 @@
 						document.getElementById("sId").value=id; 
 						document.getElementById("cstate").value=state; 
 						document.getElementById("state-form").submit(); 
+					}
+					
+					function modify_project(i)
+					{
+						var projects=<?php echo json_encode (queryProjects());?>;
+						document.getElementById("MfId").value=projects[i][0]; 
+						document.getElementById("MfcId").value=projects[i][1]; 
+						document.getElementById("MfTitle").value=projects[i][5]; 
+						document.getElementById("MFT").innerHTML="Modyfikuj: "+projects[i][5]; 
+						document.getElementById("Mfline1").value=projects[i][6]; 
+						document.getElementById("Mfline2").value=projects[i][7]; 
+						if(projects[i][9]!="brak")
+							document.getElementById("Mfdate").value=projects[i][9]; 
+						else document.getElementById("Mfdate").value="0000-00-00";
+						document.getElementById("Mfstate").value=projects[i][10]; 
+						document.getElementById("Mfpriority").value=projects[i][11]; 
+						document.getElementById("ChangeMonit").style.display = "block";
 					}
 					
 					function render_projects()
@@ -441,7 +508,7 @@
 								if(projects[i][13]==0)
 								{
 									var string="<div class='tile' onclick='submit_F("+projects[i][0]+")' id="+projects[i][0]+" > <div class='titleDiv'>"+projects[i][5]+"</div> <div class='statusDiv'><div style='width:130px; float:left; color:"+kolor+";'>"+state+"</div> <div style='width:130px; float:right; '>termin: "+projects[i][9]+"</div></div> <div class='infoDiv'><p class='infoTitle'>"+projects[i][6]+"</p><p class='infoContent'> "+projects[i][7]+"</p></div>  </div></div>";
-									string=string+"<div class='menuDiv'><button  class='tileBtn' onclick=change_status("+projects[i][0]+",1) style='margin-left:130px;'>A</button><button onclick=change_status("+projects[i][0]+",4)  class='tileBtn'>S</button><button onclick=change_status("+projects[i][0]+",2)  class='tileBtn'>✓</button><button alt='usuń strzałki'  class='tileBtn' onclick=updateArrows("+projects[i][0]+",0)>D</button><button  class='tileBtn'>M</button><button  class='tileBtn'>E</button><button class='tileBtn' onclick='deleteTile("+projects[i][0]+")'>X</button></div>";
+									string=string+"<div class='menuDiv'><button  class='tileBtn' onclick=change_status("+projects[i][0]+",1) style='margin-left:130px;'>&#10711;</button><button onclick=change_status("+projects[i][0]+",4)  class='tileBtn'>&#10707;</button><button onclick=change_status("+projects[i][0]+",2)  class='tileBtn'>✓</button><button alt='usuń strzałki'  class='tileBtn' onclick=updateArrows("+projects[i][0]+",0)>⥇</button><button  class='tileBtn'>◻</button><button onclick=modify_project("+i+")   class='tileBtn'>✎</button><button class='tileBtn' onclick='deleteTile("+projects[i][0]+")'>✖</button></div>";
 									document.getElementById(projects[i][3]+"X"+projects[i][4]).innerHTML="";
 									document.getElementById(projects[i][3]+"X"+projects[i][4]).innerHTML=string;
 									var empty="<div class='empDiv'></div>";

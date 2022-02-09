@@ -79,6 +79,7 @@ main
 	position:relative;
 	color:white;
 	width:300px;
+	height:130px;
 	background:#515151;
 	border:solid white 0.2vh;
 	border-bottom:solid #515151 0vh;
@@ -104,10 +105,11 @@ main
 }
 .menuDiv
 {
-	margin-top:-16px;
+	margin-top:0px;
 	text-align:left;
 	color:white;
 	width:300px;
+	
 	background:#515151;
 	border:solid white 0.2vh;
 	border-top:solid #515151 0vh;
@@ -208,6 +210,7 @@ monit-form
 	position:relative;
 	right:40px;
 	bottom:160px;
+	width:50px;
 	z-index:1;
 }
 .downArrow
@@ -215,16 +218,17 @@ monit-form
 	transform:rotate(90deg);
 	position:relative;
 	z-index:1;
-	bottom:47px;
-	left:27px;
-	width:70px;
-	height:70px;
+	bottom:65px;
+	left:14px;
+	width:56px;
+	height:65px;
 }
 .rightArrow
 {
 	
 	position:relative;
 	bottom:160px;
-	left:257px;
+	left:235px;
+	width:50px;
 	z-index:1;
 }
