@@ -178,11 +178,36 @@
 					];
 						array_push($projects,$linearray);
 					}
-					return $projects;
-					$polaczenie -> close();		
+					$polaczenie -> close();
+					return $projects;		
 						
 						
 				}	
+				function queryDetails()
+				{					
+					$polaczenie = mysqli_connect('localhost', 'root','','mngsitedb');
+					$quarry = "SELECT * FROM details";
+					$sql = mysqli_query($polaczenie, $quarry);
+					$details=array();	
+										
+					while($wiersz = mysqli_fetch_array($sql))
+					{
+					$linearray=[
+					0=>$wiersz['id'],
+					1=>$wiersz['children'],
+					2=>$wiersz['waiting'],
+					3=>$wiersz['in_progress'],
+					4=>$wiersz['finished'],
+					5=>$wiersz['canceled'],
+					6=>$wiersz['suspended'],
+					];
+						array_push($details,$linearray);
+					}
+					$polaczenie -> close();	
+					return $details;	
+						
+						
+				}
 				function return_lvl_max()		
 				{
 					global $id;
@@ -291,7 +316,18 @@
 				<button type="button" class="btn" onclick="closeForm('ChangeMonit')">cancel</button>
 			</form>
 		</div> 
+		<div class="details_div" id="details_div">
+			<h1 id="details_title"></h1> 
+			<hr style="margin-top:-5%;">
+			<div> 
+				<div id="details_cdate">Data utworzenia <p class="details_date" id="details_cdateIn"></p></div> 
+				<div id="details_edate">Termin zakończenia <p class="details_date" id="details_edateIn"></p></div> 
+			</div>
+			<div> 
+				
+			</div> 
 		
+		</div>
 
 	</header>
 			
@@ -348,7 +384,15 @@
 				<script type="text/javascript">
 					var inputId = document.getElementById("cId");
 					var isAdding=0;
-					
+					function compare_dates(date)
+					{
+						var curDate = new Date();
+						var comDate =new Date(date);
+						if(curDate>comDate)
+							return 1;
+						else
+							return 0;
+					}
 					function switch_mode()
 					{
 						if(isAdding==1)
@@ -463,6 +507,30 @@
 						document.getElementById("Mfpriority").value=projects[i][11]; 
 						document.getElementById("ChangeMonit").style.display = "block";
 					}
+					function show_details(id)
+					{
+						var projects=<?php echo json_encode (queryProjects());?>;
+						var details=<?php echo json_encode (queryDetails());?>;
+						var i=0;
+						for(;i<projects.length;i++)
+						{
+							if(projects[i][0]==id)
+								break;
+						}
+						if(projects[i][9]=="NULL" || projects[i][9]=="0000-00-00")
+							projects[i][9]="brak";
+						
+						document.getElementById("details_title").innerHTML=projects[i][5];
+						document.getElementById("details_cdateIn").innerHTML=projects[i][8];
+						document.getElementById("details_edateIn").innerHTML=projects[i][9];
+						
+						
+						document.getElementById("details_div").style.display="block";
+					}
+					function hide_details()
+					{
+						document.getElementById("details_div").style.display="none";
+					}
 					
 					function render_projects()
 					{
@@ -470,8 +538,12 @@
 						var projects=<?php echo json_encode (queryProjects());?>;
 						for(var i=0;i<projects.length;i++)
 						{
+							var dateColor= "white;"
 							if(projects[i][9]=="NULL" || projects[i][9]=="0000-00-00")
 							projects[i][9]="brak";
+							else if(compare_dates(projects[i][9]) && projects[i][10]*1<2)
+								dateColor="red";
+							
 								
 							var state;
 							var kolor;
@@ -507,7 +579,7 @@
 							{
 								if(projects[i][13]==0)
 								{
-									var string="<div class='tile' onclick='submit_F("+projects[i][0]+")' id="+projects[i][0]+" > <div class='titleDiv'>"+projects[i][5]+"</div> <div class='statusDiv'><div style='width:130px; float:left; color:"+kolor+";'>"+state+"</div> <div style='width:130px; float:right; '>termin: "+projects[i][9]+"</div></div> <div class='infoDiv'><p class='infoTitle'>"+projects[i][6]+"</p><p class='infoContent'> "+projects[i][7]+"</p></div>  </div></div>";
+									var string="<div class='tile' onmouseover='show_details("+projects[i][0]+")' onmouseout='hide_details()' onclick='submit_F("+projects[i][0]+")' id="+projects[i][0]+" > <div class='titleDiv'>"+projects[i][5]+"</div> <div class='statusDiv'><div style='width:130px; float:left; color:"+kolor+";'>"+state+"</div> <div style='width:130px; float:right; color:"+dateColor+";'>termin: "+projects[i][9]+"</div></div> <div class='infoDiv'><p class='infoTitle'>"+projects[i][6]+"</p><p class='infoContent'> "+projects[i][7]+"</p></div>  </div></div>";
 									string=string+"<div class='menuDiv'><button  class='tileBtn' onclick=change_status("+projects[i][0]+",1) style='margin-left:130px;'>&#10711;</button><button onclick=change_status("+projects[i][0]+",4)  class='tileBtn'>&#10707;</button><button onclick=change_status("+projects[i][0]+",2)  class='tileBtn'>✓</button><button alt='usuń strzałki'  class='tileBtn' onclick=updateArrows("+projects[i][0]+",0)>⥇</button><button  class='tileBtn'>◻</button><button onclick=modify_project("+i+")   class='tileBtn'>✎</button><button class='tileBtn' onclick='deleteTile("+projects[i][0]+")'>✖</button></div>";
 									document.getElementById(projects[i][3]+"X"+projects[i][4]).innerHTML="";
 									document.getElementById(projects[i][3]+"X"+projects[i][4]).innerHTML=string;

@@ -232,3 +232,38 @@ monit-form
 	width:50px;
 	z-index:1;
 }
+.details_div
+{
+
+	position: fixed;
+	top: 10%;
+	left: 80%;
+	margin:auto;
+	border: 0.2vw solid #f1f1f1;
+	background:#515151;
+	z-index:11;
+	width:20%;
+	height:80%;
+	font-size:1vw;
+}
+#details_title
+{
+	text-align:center;
+}
+#details_cdate
+{
+	float:left;
+	width:40%;
+	padding-left:5%;
+}
+#details_edate
+{
+	float:right;
+	width:45%;
+	padding-right:5%;
+	text-align:right;
+}
+.details_date
+{
+	margin-top:-1%;
+}
