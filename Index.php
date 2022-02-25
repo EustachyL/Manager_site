@@ -24,7 +24,7 @@
 					
 					if (isset($_POST['dId']) && $_POST['quaryMode']==2)
 						delete_project();
-					if ((isset($_POST['uId']) || isset($_POST['sId'])|| isset($_POST['MfId'])) && $_POST['quaryMode']>=3)
+					if ((isset($_POST['uId']) || isset($_POST['sId'])|| isset($_POST['MfId']) || isset($_POST['pId'])) && $_POST['quaryMode']>=3)
 						update_project($_POST['quaryMode']);
 				}	
 				
@@ -93,6 +93,10 @@
 					{
 					$uId=$_POST['sId'];
 					}
+					if($mode==6)
+					{
+					$uId=$_POST['pId'];
+					}
 					$polaczenie = mysqli_connect('localhost', 'root','','mngsitedb');
 					$quarry = "SELECT * from projekty WHERE id=".$uId;
 					$sql = mysqli_query($polaczenie, $quarry);
@@ -133,8 +137,13 @@
 						$udueDate=$_POST['Mfdate'];
 						$ustate=$_POST['Mfstate'];
 						$upriority=$_POST['Mfpriority'];
+						$unote=$_POST['Mfnote'];
 					}
-					
+					if($mode==6)
+					{
+					$upos_col=$_POST['pcol'];
+					$upos_row=$_POST['prow'];
+					}
 					
 					$quarry = "UPDATE projekty SET pos_col='$upos_col', pos_row='$upos_row', Title='$uTitle', line1='$uline1', line2='$uline2', dueDate='$udueDate', state='$ustate', priority='$upriority', note='$unote', isNote='$uisNote', isArrowOnly='$uisArrowOnly', arrowDirection='$uarrowDirection' WHERE id='$uId' ";
 					
@@ -205,6 +214,26 @@
 					}
 					$polaczenie -> close();	
 					return $details;	
+						
+						
+				}
+				function queryChildren()
+				{					
+					$polaczenie = mysqli_connect('localhost', 'root','','mngsitedb');
+					$quarry = "SELECT * FROM potomkowie";
+					$sql = mysqli_query($polaczenie, $quarry);
+					$Children=array();	
+										
+					while($wiersz = mysqli_fetch_array($sql))
+					{
+					$linearray=[
+					0=>$wiersz['parent_id'],
+					1=>$wiersz['id'],
+					];
+						array_push($Children,$linearray);
+					}
+					$polaczenie -> close();	
+					return $Children;	
 						
 						
 				}
@@ -291,7 +320,7 @@
 				<input type="text" placeholder="Title" name="MfTitle" id="MfTitle" required>
 				<br>				
 				<label for="line1"><b>Linia 1</b></label>
-				<input type="text" placeholder="tekst" name="Mfline1" id="Mfline1">
+				<input class="large_text" type="text" placeholder="tekst" name="Mfline1" id="Mfline1">
 				<br>
 				<label for="line2"><b>Linia 2</b></label>
 				<input type="text" placeholder="tekst" name="Mfline2" id="Mfline2" >
@@ -311,6 +340,10 @@
 				<label for="priority" ><b>Piorytet</b></label>
 				<input type="number" value=1 name="Mfpriority" id="Mfpriority" required>
 				<br>
+				<label for="Mfnote" ><b>Note</b></label>
+				<br>
+				<textarea id="Mfnote" name="Mfnote" rows="6" cols="30"></textarea>
+				<br>
 			
 				<button type="button" class="btn" onclick="submitForm('ChangeMonit')" >modify</button>
 				<button type="button" class="btn" onclick="closeForm('ChangeMonit')">cancel</button>
@@ -323,9 +356,22 @@
 				<div id="details_cdate">Data utworzenia <p class="details_date" id="details_cdateIn"></p></div> 
 				<div id="details_edate">Termin zakończenia <p class="details_date" id="details_edateIn"></p></div> 
 			</div>
-			<div> 
+			<div id="details_date_bar"> </div> 
+			<div class="details_children">
+				<h3 class="details_subtitle">Elementy potomne</h3>
+				<div style="width:45%; float:left; padding-left:5%;">
+					Łącznie: <br> <span style="color:grey;">Oczekujące: </span><br> <span style="color:blue;">W trakcie: </span><br>
+					<span style="color:green;">Zakończone: </span><br> <span style="color:yellow;">Wstrzymane: </span><br>
+					<span style="color:red;">Anulowane:</span>
+				</div>
+				<div id="details_children_stats" style="width:45%; float:right; padding-right:5%;">
 				
-			</div> 
+				</div>
+				<h3 class="details_subtitle" style="margin-top:30%; margin-bottom:0%;">Nota:</h3>
+				<div id="details_note" class="details_note">
+				
+				</div>
+			</div>
 		
 		</div>
 
@@ -352,11 +398,11 @@
 	</nav>
 	
 	<div class="underniv">
-	<p style="position:relative; bottom:18px;">Version: 1.0;01.01.2022</p>
+	<p style="position:relative; bottom:18px;">Version: 1.1;26.02.2022</p>
 	</div>
 	<section class="flexbox">
 	<div class="header">
-		<h2 id="mainName"><?php echo(main_name());?></h2>
+		<div class="header_title"><h2 id="mainName"><?php echo(main_name());?></h2></div>
 		<form method="post" class="hiddenForm" id="changeForm">	
 			<input class="hiddenInput" id="cId" name="cId" type="number" value="-1">
 		</form>
@@ -374,6 +420,12 @@
 			<input class="hiddenInput" hidden type="number"  id="sId" name="sId" value="-1">
 			<input class="hiddenInput" hidden type="number"  id="cstate" name="cstate" value="-1">
 		</form>
+		<form method="post" id="position-form" class="hiddenForm">
+			<input class="hiddenInput" id="quaryMode" name="quaryMode" type="number" value="6"> 
+			<input class="hiddenInput" hidden type="number"  id="pId" name="pId" value="-1">
+			<input class="hiddenInput" hidden type="number"  id="pcol" name="pcol" value="-1">
+			<input class="hiddenInput" hidden type="number"  id="prow" name="prow" value="-1">
+		</form>
 		
 	</div>
 		<main>
@@ -384,6 +436,7 @@
 				<script type="text/javascript">
 					var inputId = document.getElementById("cId");
 					var isAdding=0;
+					var positionMode=0;
 					function compare_dates(date)
 					{
 						var curDate = new Date();
@@ -398,12 +451,14 @@
 						if(isAdding==1)
 						{
 							document.getElementById("fieldMonit").style.display = "none";
+							
 							isAdding=0;
 						}
 						else
 						{
 							document.getElementById("fieldMonit").style.display = "block";
-							isAdding=1;
+							setTimeout(function(){isAdding=1;},100);
+							
 						}
 						
 					}
@@ -428,13 +483,23 @@
 					{
 						if(isAdding==1)
 						{
-							document.getElementById(col+"X"+row).style.background="";
-							document.getElementById("col").value=col;
-							document.getElementById("row").value=row;
-							document.getElementById("parent").value=<?php  echo json_encode( $id);?>;
-							
-							switch_mode();
-							new_form();
+							if(positionMode==1)
+							{
+								document.getElementById(col+"X"+row).style.background="";
+								document.getElementById("pcol").value=col;
+								document.getElementById("prow").value=row;	
+								switch_mode();	
+								positionMode=0;
+								document.getElementById("position-form").submit(); 
+							}else{
+								document.getElementById(col+"X"+row).style.background="";
+								document.getElementById("col").value=col;
+								document.getElementById("row").value=row;
+								document.getElementById("parent").value=<?php  echo json_encode( $id);?>;
+								
+								switch_mode();
+								new_form();
+							}
 						}
 					}
 					
@@ -507,23 +572,74 @@
 						document.getElementById("Mfpriority").value=projects[i][11]; 
 						document.getElementById("ChangeMonit").style.display = "block";
 					}
+					function move_project(id)
+					{
+						document.getElementById("pId").value=id; 
+						positionMode=1;
+						switch_mode();
+					}
 					function show_details(id)
 					{
 						var projects=<?php echo json_encode (queryProjects());?>;
-						var details=<?php echo json_encode (queryDetails());?>;
 						var i=0;
 						for(;i<projects.length;i++)
 						{
 							if(projects[i][0]==id)
 								break;
 						}
+						function calculate_children(idt, type, mode=0)
+						{
+						var details=<?php echo json_encode (queryDetails());?>;
+						var children=<?php echo json_encode (queryChildren());?>;
+							var total=0;
+							
+							for(var j=0;j<details.length;j++)
+							{
+								if(details[j][0]==idt)
+									total+=details[j][type+1]*1;
+							}
+							if(mode==0)
+							for(var j=0;j<children.length;j++)
+							{
+								if(children[j][0]==idt)
+									total+=calculate_children(children[j][1], type)*1;
+							}
+							return total;
+						}
 						if(projects[i][9]=="NULL" || projects[i][9]=="0000-00-00")
 							projects[i][9]="brak";
 						
 						document.getElementById("details_title").innerHTML=projects[i][5];
+						
+						
 						document.getElementById("details_cdateIn").innerHTML=projects[i][8];
 						document.getElementById("details_edateIn").innerHTML=projects[i][9];
+						var curDate = new Date();
+						var cDate =new Date(projects[i][8]);
+						var eDate =new Date(projects[i][9]);
+						curDate=curDate.getTime();
+						cDate=cDate.getTime();
+						eDate=eDate.getTime();
+						var daysPassed=((curDate-cDate)/ (1000 * 3600 * 24)).toFixed(1);
+						var daysAhead=((eDate-curDate)/ (1000 * 3600 * 24)).toFixed(1);
 						
+							
+						var dBar="<div style='background:grey; height:100%; width:"+((curDate-cDate)/(eDate-cDate)*100).toFixed(0)+"%;'>"+daysPassed+"</div> <div style='background:green; height:100%;  width:"+((eDate-curDate)/(eDate-cDate)*100).toFixed(0)+"%;'>"+daysAhead+"</div>";
+						if(daysAhead=="NaN")
+							dBar="<div style='background:grey; height:100%; text-align:center;  width:100%;'>"+daysPassed+" dni od utworzenia</div>";
+						if(projects[i][10]*1==2)
+							dBar="<div style='background:green; height:100%; text-align:center;  width:100%;'>Ukończony</div>";
+						else if(daysAhead<0)
+							dBar="<div style='background:red; height:100%; text-align:center;  width:100%;'>"+daysAhead*-1+" dni po terminie</div>";
+						document.getElementById("details_date_bar").innerHTML=dBar;
+						var total=calculate_children(id,0);
+						var spacing="&emsp; &emsp;&emsp; &emsp;"
+						var innertext=total+spacing+'  <br> <span style="color:grey;">'+calculate_children(id,1)+spacing+(calculate_children(id,1)/total*100).toFixed(0)+'%</span><br> <span style="color:blue;">'+calculate_children(id,2)+spacing+(calculate_children(id,2)/total*100).toFixed(0)+'%</span><br>';
+						innertext+='<span style="color:green;">'+calculate_children(id,3)+spacing+(calculate_children(id,3)/total*100).toFixed(0)+'%</span><br> <span style="color:yellow;">'+calculate_children(id,4)+spacing+(calculate_children(id,4)/total*100).toFixed(0)+'%</span><br>';
+						innertext+='<span style="color:red;">'+calculate_children(id,5)+spacing+(calculate_children(id,5)/total*100).toFixed(0)+'%</span>';
+						document.getElementById("details_children_stats").innerHTML=innertext;
+						
+						document.getElementById("details_note").innerHTML=projects[i][12];
 						
 						document.getElementById("details_div").style.display="block";
 					}
@@ -580,7 +696,7 @@
 								if(projects[i][13]==0)
 								{
 									var string="<div class='tile' onmouseover='show_details("+projects[i][0]+")' onmouseout='hide_details()' onclick='submit_F("+projects[i][0]+")' id="+projects[i][0]+" > <div class='titleDiv'>"+projects[i][5]+"</div> <div class='statusDiv'><div style='width:130px; float:left; color:"+kolor+";'>"+state+"</div> <div style='width:130px; float:right; color:"+dateColor+";'>termin: "+projects[i][9]+"</div></div> <div class='infoDiv'><p class='infoTitle'>"+projects[i][6]+"</p><p class='infoContent'> "+projects[i][7]+"</p></div>  </div></div>";
-									string=string+"<div class='menuDiv'><button  class='tileBtn' onclick=change_status("+projects[i][0]+",1) style='margin-left:130px;'>&#10711;</button><button onclick=change_status("+projects[i][0]+",4)  class='tileBtn'>&#10707;</button><button onclick=change_status("+projects[i][0]+",2)  class='tileBtn'>✓</button><button alt='usuń strzałki'  class='tileBtn' onclick=updateArrows("+projects[i][0]+",0)>⥇</button><button  class='tileBtn'>◻</button><button onclick=modify_project("+i+")   class='tileBtn'>✎</button><button class='tileBtn' onclick='deleteTile("+projects[i][0]+")'>✖</button></div>";
+									string=string+"<div class='menuDiv'><button  class='tileBtn' onclick=change_status("+projects[i][0]+",1) style='margin-left:130px;'>&#10711;</button><button onclick=change_status("+projects[i][0]+",4)  class='tileBtn'>&#10707;</button><button onclick=change_status("+projects[i][0]+",2)  class='tileBtn'>✓</button><button alt='usuń strzałki'  class='tileBtn' onclick=updateArrows("+projects[i][0]+",0)>⥇</button><button onclick='move_project("+projects[i][0]+")' class='tileBtn'>◻</button><button onclick=modify_project("+i+")   class='tileBtn'>✎</button><button class='tileBtn' onclick='deleteTile("+projects[i][0]+")'>✖</button></div>";
 									document.getElementById(projects[i][3]+"X"+projects[i][4]).innerHTML="";
 									document.getElementById(projects[i][3]+"X"+projects[i][4]).innerHTML=string;
 									var empty="<div class='empDiv'></div>";

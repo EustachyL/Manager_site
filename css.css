@@ -28,6 +28,11 @@ nav
 	background:#313131;
 	
 }
+.header_title
+{
+
+	
+}
 #mainName
 {
 	margin-left:45%;
@@ -266,4 +271,28 @@ monit-form
 .details_date
 {
 	margin-top:-1%;
+}
+#details_date_bar
+{
+	display: flex;
+	flex-direction: row;
+	height:3%;
+	width:90%;
+	padding-right:5%;
+	padding-left:5%;
+	margin-top:20%;
+}
+.details_subtitle
+{
+	text-align:center;
+}
+.details_note
+{
+	padding-left:5%;
+}
+
+.large_text
+{
+	width:70%;
+	height:100px;
 }
