@@ -57,7 +57,7 @@ main
 	padding-top:2%;
 	background:#515151;
 }
-.navdiv:hover
+.navdiv:hover, #back:hover
 {
 	color:C40021;
 	background:#57BBBF;
@@ -290,9 +290,13 @@ monit-form
 {
 	padding-left:5%;
 }
-
-.large_text
+#back
 {
-	width:70%;
-	height:100px;
+	position:fixed;
+	background:#515151;
+	color:white;
+	font-size: 1.5vw;
+	right:1%;
+	padding:0.5%;
+	border:solid white 0.1vh;
 }

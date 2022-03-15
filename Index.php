@@ -283,7 +283,7 @@
 				<input type="text" placeholder="Title" name="Title" required>
 				<br>				
 				<label for="line1"><b>Linia 1</b></label>
-				<input type="text" placeholder="tekst" name="line1" >
+				<textarea id="line1" name="line1" rows="1" cols="30"></textarea>
 				<br>
 				<label for="line2"><b>Linia 2</b></label>
 				<input type="text" placeholder="tekst" name="line2" >
@@ -319,8 +319,8 @@
 				<label for="Title"><b>Title</b></label>
 				<input type="text" placeholder="Title" name="MfTitle" id="MfTitle" required>
 				<br>				
-				<label for="line1"><b>Linia 1</b></label>
-				<input class="large_text" type="text" placeholder="tekst" name="Mfline1" id="Mfline1">
+				<label for="Mfline1"><b>Linia 1</b></label>
+				<textarea id="Mfline1" name="Mfline1" rows="1" cols="30"></textarea>
 				<br>
 				<label for="line2"><b>Linia 2</b></label>
 				<input type="text" placeholder="tekst" name="Mfline2" id="Mfline2" >
@@ -429,8 +429,11 @@
 		
 	</div>
 		<main>
+			<div id="back" onclick="getBack()">
+				. . .
+			</div>
 			<div class="container" id="container" style="color:white;">
-			
+				
 				
 
 				<script type="text/javascript">
@@ -508,6 +511,18 @@
 						inputId.value=newParent;
 						document.getElementById("changeForm").submit(); 
 					}
+					function getBack()
+					{
+						
+						var cParent=<?php  echo json_encode( $id);?>;
+						var children=<?php echo json_encode (queryChildren());?>;
+						for(var i=0;i<children.length;i++)
+						{
+							if(children[i][1]==cParent)
+								submit_F(children[i][0]);
+						}
+						
+					}
 					
 					function home()
 					{
@@ -570,6 +585,7 @@
 						else document.getElementById("Mfdate").value="0000-00-00";
 						document.getElementById("Mfstate").value=projects[i][10]; 
 						document.getElementById("Mfpriority").value=projects[i][11]; 
+						document.getElementById("Mfnote").value=projects[i][12]; 
 						document.getElementById("ChangeMonit").style.display = "block";
 					}
 					function move_project(id)
@@ -782,6 +798,7 @@
 						
 						generate_grid();
 						render_projects();
+						hide_details();
 
 					};
 				</script>
